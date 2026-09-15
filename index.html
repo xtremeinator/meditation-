@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sandhi</title>
+<meta name="description" content="A daily contemplative practice built on twelve four-week blocks, alternating between the recognition traditions and the cultivation traditions.">
+<meta name="theme-color" content="#201C24">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Sandhi">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="color-scheme" content="dark">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,400;0,500;1,6..72,300&family=Archivo:wght@400;500;600&display=swap');
+
+:root{
+  --ground:#201C24;
+  --raised:#2A2531;
+  --sunk:#1A171E;
+  --line:#3A3341;
+  --bone:#EAE3D7;
+  --quiet:#9A9089;
+  --faint:#6B6370;
+  --gold:#C9A24B;
+  --lapis:#6D82BE;
+  --serif:'Newsreader','Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif;
+  --sans:'Archivo','Helvetica Neue',Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--ground);color:var(--bone)}
+body{font-family:var(--sans);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:2px}
+a{color:var(--bone)}
+
+#app{max-width:620px;margin:0 auto;padding:0 22px 110px;min-height:100vh}
+
+/* ---------- shared chrome ---------- */
+.crumb{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding:26px 0 0;font-size:13px;color:var(--faint)}
+.crumb b{font-weight:500;color:var(--quiet)}
+.path-tag{font-size:12px;letter-spacing:.02em;padding:2px 9px;border-radius:99px;border:1px solid}
+.direct{color:var(--gold);border-color:rgba(201,162,75,.4)}
+.gradual{color:var(--lapis);border-color:rgba(109,130,190,.4)}
+
+h2.screen{font-family:var(--serif);font-weight:400;font-size:26px;margin:24px 0 4px;letter-spacing:-.01em}
+.sub{color:var(--quiet);font-size:14px;margin:0 0 26px;max-width:46ch}
+
+/* ---------- today ---------- */
+.week-theme{font-family:var(--serif);font-style:italic;font-size:17px;color:var(--quiet);margin:18px 0 0}
+.fmt{font-size:13px;color:var(--faint);margin:34px 0 14px;display:flex;align-items:center;gap:9px}
+.fmt::after{content:"";flex:1;height:1px;background:var(--line)}
+
+.pointer{font-family:var(--serif);font-weight:300;font-size:clamp(29px,7.4vw,40px);line-height:1.24;letter-spacing:-.017em;margin:0;max-width:19ch;text-wrap:balance}
+.daytitle{font-size:13px;color:var(--gold);margin:0 0 16px;font-weight:500}
+.gradual-day .daytitle{color:var(--lapis)}
+
+.teach{font-family:var(--serif);font-size:17.5px;line-height:1.62;color:#C9C1B6;margin:26px 0 0;max-width:60ch}
+.teach p{margin:0 0 13px}
+
+.hold{margin:30px 0 0;padding:17px 19px;background:var(--sunk);border-left:2px solid var(--gold);border-radius:0 5px 5px 0}
+.gradual-day .hold{border-left-color:var(--lapis)}
+.hold span{display:block;font-size:12.5px;color:var(--faint);margin-bottom:6px}
+.hold em{font-family:var(--serif);font-style:normal;font-size:18px;line-height:1.45;color:var(--bone)}
+
+.durs{display:flex;gap:8px;margin:34px 0 0;flex-wrap:wrap}
+.dur{padding:9px 0;width:62px;text-align:center;border:1px solid var(--line);border-radius:5px;font-size:14px;color:var(--quiet);transition:none}
+.dur[aria-pressed="true"]{border-color:var(--gold);color:var(--gold);background:rgba(201,162,75,.07)}
+.begin{margin:14px 0 0;width:100%;padding:16px;background:var(--gold);color:#241D0C;border-radius:6px;font-size:16px;font-weight:600}
+.begin.done{background:none;border:1px solid var(--line);color:var(--quiet);font-weight:400}
+
+/* ---------- sit ---------- */
+#sit{position:fixed;inset:0;background:var(--ground);z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center}
+#sit.on{display:flex}
+.ring{width:190px;height:190px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;position:relative;margin-bottom:34px}
+.ring i{position:absolute;inset:-1px;border-radius:50%;border:1px solid var(--gold);opacity:.55;animation:br 11s ease-in-out infinite}
+@keyframes br{0%,100%{transform:scale(.62);opacity:.22}50%{transform:scale(1);opacity:.6}}
+@media (prefers-reduced-motion:reduce){.ring i{animation:none;transform:scale(.82)}}
+.clock{font-family:var(--serif);font-size:42px;font-weight:300;font-variant-numeric:tabular-nums;color:var(--bone)}
+.sit-pointer{font-family:var(--serif);font-weight:300;font-size:22px;line-height:1.4;max-width:21ch;color:#CFC7BC;margin:0 0 30px}
+.sit-acts{display:flex;gap:12px;margin-top:8px}
+.sit-acts button{padding:11px 22px;border:1px solid var(--line);border-radius:5px;font-size:14px;color:var(--quiet)}
+
+/* ---------- close ---------- */
+.field{margin:22px 0 0}
+.field label{display:block;font-size:13.5px;color:var(--quiet);margin-bottom:9px}
+textarea{width:100%;background:var(--sunk);border:1px solid var(--line);border-radius:5px;color:var(--bone);padding:13px;font-family:var(--serif);font-size:16.5px;line-height:1.5;resize:vertical;min-height:88px}
+textarea:focus{outline:none;border-color:var(--gold)}
+.yn{display:flex;gap:9px}
+.yn button{flex:1;padding:12px;border:1px solid var(--line);border-radius:5px;font-size:14px;color:var(--quiet)}
+.yn button[aria-pressed="true"]{border-color:var(--gold);color:var(--gold);background:rgba(201,162,75,.07)}
+
+/* ---------- days ---------- */
+.mon{display:flex;align-items:center;justify-content:space-between;margin:0 0 16px}
+.mon h3{font-family:var(--serif);font-weight:400;font-size:19px;margin:0}
+.mon button{padding:6px 12px;color:var(--faint);font-size:19px;line-height:1}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}
+.dow{font-size:11px;color:var(--faint);text-align:center;padding-bottom:3px}
+.cell{aspect-ratio:1;border-radius:4px;background:var(--sunk);display:grid;place-items:center;font-size:11.5px;color:var(--faint);border:1px solid transparent}
+.cell.sat{background:rgba(201,162,75,.2);border-color:rgba(201,162,75,.5);color:var(--bone)}
+.cell.sat.g{background:rgba(109,130,190,.2);border-color:rgba(109,130,190,.5)}
+.cell.today{border-color:var(--quiet)}
+.cell.blank{background:none}
+
+.tally{display:flex;gap:28px;margin:30px 0 8px;flex-wrap:wrap}
+.tally div span{display:block;font-family:var(--serif);font-size:27px;font-weight:300;line-height:1.1}
+.tally div small{font-size:12.5px;color:var(--faint)}
+
+.log{margin:32px 0 0;border-top:1px solid var(--line)}
+.entry{padding:17px 0;border-bottom:1px solid var(--line)}
+.entry header{display:flex;justify-content:space-between;gap:12px;font-size:12.5px;color:var(--faint);margin-bottom:7px}
+.entry h4{font-size:14px;font-weight:500;margin:0 0 5px;color:var(--quiet)}
+.entry p{font-family:var(--serif);font-size:16.5px;line-height:1.55;margin:0;color:#C6BEB3}
+
+/* ---------- year ---------- */
+.block{display:flex;gap:15px;padding:16px 0;border-bottom:1px solid var(--line);align-items:flex-start;width:100%;text-align:left}
+.block .no{font-family:var(--serif);font-size:15px;color:var(--faint);width:19px;flex:none;padding-top:2px}
+.block h4{margin:0 0 3px;font-family:var(--serif);font-weight:400;font-size:18.5px}
+.block p{margin:0;font-size:13px;color:var(--faint)}
+.block.now{background:linear-gradient(90deg,rgba(201,162,75,.08),transparent);margin:0 -14px;padding:16px 14px;border-radius:5px}
+.weeks{margin:9px 0 0;padding:0;list-style:none;font-size:13.5px;color:var(--quiet)}
+.weeks li{padding:4px 0 4px 15px;position:relative}
+.weeks li::before{content:"";position:absolute;left:0;top:12px;width:6px;height:1px;background:var(--line)}
+.weeks li.wk{color:var(--gold)}
+.g-block .weeks li.wk{color:var(--lapis)}
+
+/* ---------- read ---------- */
+.res{padding:19px 0;border-bottom:1px solid var(--line)}
+.res h4{margin:0 0 3px;font-family:var(--serif);font-weight:400;font-size:18px}
+.res .who{font-size:12.5px;color:var(--faint);margin:0 0 8px}
+.res p{margin:0 0 9px;font-size:14.5px;line-height:1.55;color:var(--quiet)}
+.res a{font-size:13.5px;color:var(--gold);text-decoration:none;border-bottom:1px solid rgba(201,162,75,.35);padding-bottom:1px}
+.group{font-family:var(--serif);font-size:15px;font-style:italic;color:var(--quiet);margin:34px 0 2px;padding-top:8px}
+
+/* ---------- nav ---------- */
+nav{position:fixed;left:0;right:0;bottom:0;background:rgba(26,23,30,.97);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+.navin{max-width:620px;margin:0 auto;display:flex}
+nav button{flex:1;padding:14px 4px 15px;font-size:12.5px;color:var(--faint)}
+nav button[aria-current="page"]{color:var(--gold)}
+.hidden{display:none}
+
+/* ---------- data management ---------- */
+.data{margin:44px 0 0;padding-top:26px;border-top:1px solid var(--line)}
+.data h3{font-family:var(--serif);font-weight:400;font-size:18px;margin:0 0 5px}
+.data > p{font-size:13.5px;color:var(--faint);margin:0 0 18px;max-width:52ch;line-height:1.55}
+.row{display:flex;gap:9px;flex-wrap:wrap;margin:0 0 14px}
+.row button{padding:10px 16px;border:1px solid var(--line);border-radius:5px;font-size:13.5px;color:var(--quiet)}
+.row button.warn{border-color:rgba(190,90,70,.45);color:#C98070}
+.startdate{display:flex;align-items:center;gap:11px;font-size:13.5px;color:var(--faint);flex-wrap:wrap}
+.startdate input{background:var(--sunk);border:1px solid var(--line);border-radius:5px;color:var(--bone);padding:8px 11px;font:inherit;font-size:13.5px;color-scheme:dark}
+.startdate input:focus{outline:none;border-color:var(--gold)}
+.flash{margin:14px 0 0;font-size:13.5px;color:var(--gold)}
+</style>
+</head>
+<body>
+<script>
+/* f: s = silent sit with one pointer | t = short teaching, then sit | g = longer guided script */
+const D=(t,p,f,x,h)=>({t,p,f,x,h});
+
+const BLOCKS=[
+{
+ n:1,path:"direct",name:"The Vijñāna Bhairava Tantra",
+ src:"Kashmir Shaivism, c. 9th century",
+ note:"A hundred and twelve short instructions for entering awareness directly. Nothing is built. Each one is a doorway that works on its own.",
+ weeks:[
+ {theme:"The turning points of the breath",days:[
+  D("Where the in-breath ends","Find the point where breathing in has finished and breathing out has not yet begun. Rest there.","t",
+   "<p>The text does not ask you to control the breath. It asks you to notice that breathing has a hinge in it, a place where one movement has stopped and the next has not started.</p><p>That hinge is not empty. It is the most awake part of the cycle, and it is available to you around fifteen times a minute without any effort at all.</p>",
+   "Whenever you notice you are breathing today, look for the turn at the top."),
+  D("Where the out-breath ends","Find the point where breathing out has finished and the next breath has not arrived. Stay in it.","s",
+   "<p>The same hinge at the other end. This one tends to be wider and quieter, because nothing is pulling you forward yet.</p><p>Do not hold the breath to lengthen it. You are looking for the gap that is already there, not making one.</p>",
+   "The pause after letting something go is the instruction, not the pause before taking something on."),
+  D("Both turns, one cycle","Follow the breath only to find its two ends. Let the middle pass unwatched.","s",
+   "<p>You are no longer tracking the whole breath. You are waiting at two doors.</p><p>The movement between them becomes background. What you are attending to is the stillness that punctuates it.</p>",
+   "Two stops in every breath. Nothing else required."),
+  D("Breathing happens to you","Watch the breath as something that is being done, not something you are doing.","t",
+   "<p>Look for the moment the in-breath begins. You did not decide it. It arrived.</p><p>This is the first crack in the sense of being the author of your own experience, and it is a crack you can open with nothing but attention.</p>",
+   "Notice once today that the next breath came without you ordering it."),
+  D("Where breath dissolves","Follow the in-breath inward until you can no longer find it. Stay where it disappears.","s",
+   "<p>The breath has a limit past which attention cannot track it. The text treats that limit as an entrance rather than a dead end.</p><p>You are not trying to feel it in the lungs. You are following it until the following stops working.</p>",
+   "Follow anything to the point where following stops. Wait there."),
+  D("Breath at the centre of the chest","Let attention rest where the breath is felt in the middle of the chest, and keep it there.","s",
+   "<p>The heart centre in this tradition is not sentimental. It is a location where the breath's arrival and departure register clearly.</p><p>The point is steadiness of place, not feeling. Put attention there and leave it there.</p>",
+   "One place, held. Return to it during the day without ceremony."),
+  D("The first breath of the day","Tomorrow, catch the first breath you take before you become anyone in particular.","t",
+   "<p>Waking has a short window in it, before the day's identity assembles. The text points at that window repeatedly.</p><p>Today, practise finding the turn in the breath so cleanly that tomorrow morning you find it before you find yourself.</p>",
+   "Set nothing. Just intend to catch the first breath before the first thought.")
+ ]},
+ {theme:"Gaps and thresholds",days:[
+  D("Between two thoughts","Find the interval where one thought has gone and the next has not come. Rest in it.","t",
+   "<p>The usual assumption is that thoughts are continuous. They are not. There is a seam between them, and it is not made of thought.</p><p>You cannot hunt for the seam, because hunting is a thought. You can only notice it after the fact, and then notice it slightly sooner.</p>",
+   "The seam between two thoughts is available all day and costs nothing."),
+  D("The moment of waking","At the instant of waking, before you are anyone, stay there.","t",
+   "<p>Sleep does not end and waking begin at a line. There is a passage between them where awareness is present and the person is not yet assembled.</p><p>The text treats that passage as one of the clearest doorways available to an ordinary life.</p>",
+   "Tomorrow morning: stay in the passage a few seconds longer than usual."),
+  D("The edge of sleep","At the point where you are falling asleep tonight, watch the person dissolve without following them down.","s",
+   "<p>The instruction is not to stay awake. It is to be present at the boundary rather than crossing it unconscious.</p><p>You will usually fail and fall asleep. Failing is fine; the intention itself changes the quality of the boundary over weeks.</p>",
+   "Tonight, notice the boundary. Falling asleep is not a failed attempt."),
+  D("Between two actions","At the joint between finishing one thing and beginning the next, stop for a breath.","s",
+   "<p>The day is built from joints. Closing a laptop, standing up, ending a call, putting a cup down.</p><p>Each joint has a gap in it that you usually paper over by reaching for the next thing.</p>",
+   "Find three joints today and leave them open for one breath."),
+  D("Before naming","Between seeing something and calling it something, there is a moment. Find it.","t",
+   "<p>Perception is quicker than language. For a fraction of a second there is contact without category.</p><p>That fraction is not mystical. It is simply earlier than the machinery you normally live at the output of.</p>",
+   "Look at one thing today and do not name it for a few seconds."),
+  D("The blank that shock makes","When something startles you, notice the blank it punches in the mind before you recover.","s",
+   "<p>The text lists sudden fright, a sneeze, a loud sound, the start of a yawn. All of them stop the mind for an instant.</p><p>Ordinarily you rush to fill the instant. Today, let it stand.</p>",
+   "The next time something startles you, do not immediately fill the blank."),
+  D("The gap is not between things","Consider that the gap is not an interval in awareness. It is awareness, briefly unobstructed.","g",
+   "<p>Sit. Find any of the gaps you have been working with this week: the turn in the breath, the seam between thoughts, the joint between actions.</p><p>Now stop treating it as a pause in the ordinary stream. Try it the other way round: the gap is the ground, and thoughts and breaths are things that happen in front of it. Everything you have practised this week was one long argument for that reversal.</p>",
+   "The gaps are not holes in the day. The day is a thing happening in front of them.")
+ ]},
+ {theme:"The senses as doorways",days:[
+  D("A sound, fading","Strike or hear a sound and follow it all the way into silence.","t",
+   "<p>A bell, a bowl, a car passing. The instruction is to stay with it past the point where it is clearly a sound.</p><p>The tail of a sound thins out gradually, and attention that follows it thins with it.</p>",
+   "Follow one sound today past the point where you can still hear it."),
+  D("Sound without sorting","Let all sound arrive at once. Do not identify anything.","s",
+   "<p>The habit is to sort sound into sources: traffic, a voice, a fan. Sorting is a second operation laid on top of hearing.</p><p>Drop the second operation. Let it be one undivided field.</p>",
+   "Hear the street without naming a single thing in it."),
+  D("A soft gaze","Look at a plain surface without focusing. Let the eyes stop hunting.","s",
+   "<p>Eyes normally saccade, grabbing detail. A wall, the sky, an unremarkable patch of floor gives them nothing to grab.</p><p>When the grabbing stops, something in the attention behind the eyes also loosens.</p>",
+   "Rest your eyes on something with nothing in it, twice today."),
+  D("Open sky","Look at open space until the one looking feels less located.","t",
+   "<p>The text repeatedly uses the sky, or open space in any direction, as an object with no edges to close attention around.</p><p>If there is no sky, a large blank wall or the dark behind closed eyes will do the same work.</p>",
+   "Find open space once today and look at it without looking for anything."),
+  D("The whole body at once","Feel every point of contact your body has, simultaneously, rather than in sequence.","s",
+   "<p>Body scans move part by part. This is the opposite instruction.</p><p>Try to hold the entire field of sensation as one object. It cannot be done by effort, which is the point.</p>",
+   "Once today, feel the whole body at once instead of scanning it."),
+  D("One deliberate taste","Take one mouthful, or one smell, and give it the whole of your attention.","s",
+   "<p>Taste and smell are the senses most routinely lost to distraction. They are also immediate and hard to think about.</p><p>One mouthful, fully attended, is the whole practice.</p>",
+   "One mouthful today with nothing else happening."),
+  D("Closing the doors","Close the senses and treat the dark behind the eyes as space rather than as nothing.","g",
+   "<p>Sit with the eyes closed and the ears unattended. What remains is usually dismissed as blankness.</p><p>Look at it as you looked at the sky earlier this week. It has no edges either. The week has been six different doors into the same room, and this is the seventh, with the doors shut.</p>",
+   "The dark behind the eyes has no walls. Notice that once today.")
+ ]},
+ {theme:"Desire and intensity",days:[
+  D("A desire, the instant it arises","Catch a wanting at the moment it appears, before the story about it starts.","t",
+   "<p>This is the tradition's most distinctive move. Desire is not a problem to be suppressed, it is energy arriving, and the arrival is visible if you are quick.</p><p>You are not trying to stop wanting. You are trying to see the first millisecond of it.</p>",
+   "Catch one wanting today before the reason for it arrives."),
+  D("Pleasure without the object","When something is pleasant, stay with the pleasantness and let the cause fall away.","s",
+   "<p>Ordinarily pleasure sends attention straight to the thing that caused it. The text asks you to hold the feeling and drop the object.</p><p>What is left is not a lesser pleasure. It is the same energy, unattached.</p>",
+   "Feel one good thing today without thinking about what caused it."),
+  D("Anger as energy","When anger comes, watch it as raw movement. Do not act on it and do not suppress it.","t",
+   "<p>Suppression and expression are both ways of getting rid of the feeling. There is a third option, which is to hold it and look.</p><p>Held without discharge, anger stops being about anyone and becomes simply intense.</p>",
+   "If irritation comes today, neither act nor push it down. Just watch the heat."),
+  D("Fear, held","Do the same with fear or anxiety. Stay with the sensation and let the reason go.","s",
+   "<p>Anxiety is mostly the story attached to a body state. Separate the two and the body state is survivable.</p><p>This is a genuine practice and not a trivial one. Go gently.</p>",
+   "If anxiety comes, find the body sensation and leave the story alone for a minute."),
+  D("Joy with nothing attached","Find delight that is not about anything, and do not look for its cause.","s",
+   "<p>The tradition's name for the goal is often translated as wonder or astonishment rather than peace.</p><p>Unattached gladness is not manufactured. It shows up in gaps, which is why it took you three weeks to get here.</p>",
+   "If something lifts today, do not immediately find out why."),
+  D("After the wanting is satisfied","When you get what you wanted, look at the gap that opens the moment before the next wanting starts.","s",
+   "<p>Satisfaction has a short silence in it. The mind normally races through this silence to the next object.</p><p>The silence is not caused by the object. It is what is there whenever wanting is momentarily absent.</p>",
+   "Get something you wanted today and notice the quiet just after."),
+  D("All of it is one energy","Take any strong state of the last four weeks and see it as the same energy, differently shaped.","g",
+   "<p>Sit and recall the month. The turn in the breath, the seam between thoughts, the sound fading, the anger held without discharge, the gladness without a cause.</p><p>The text's claim is that these are not twenty-eight techniques. They are twenty-eight places where the same single thing becomes briefly visible. You have not been accumulating anything. You have been finding out how many doors there are.</p>",
+   "Twenty-eight doors, one room. Use whichever one is nearest today.")
+ ]}
+ ]
+},
+{
+ n:2,path:"gradual",name:"Ānāpānasati",
+ src:"Majjhima Nikāya 118, early Buddhist canon",
+ note:"Sixteen steps in four sets of four, in order. Unlike last month, this one is cumulative. Each step rests on the one before it.",
+ weeks:[
+ {theme:"The first tetrad: the body",days:[
+  D("Long breath","Know a long breath as long, while it is happening.","t",
+   "<p>The first instruction is almost insultingly simple, and it is deliberate. You are not changing the breath. You are establishing that you can know it while it occurs.</p><p>Everything in the next four weeks rests on this staying in place.</p>",
+   "Know one long breath as long, three times today."),
+  D("Short breath","Know a short breath as short.","s",
+   "<p>The pair with yesterday. Between them they cover every breath you will take, which means the practice has no gaps in it.</p><p>Short breaths tend to come with agitation, which makes this the more useful of the two.</p>",
+   "When the breath goes short today, notice that it has."),
+  D("The whole breath body","Breathe in sensitive to the whole length of the breath, beginning to end.","t",
+   "<p>The third step widens from a label to a span. You are following the breath across its full duration rather than sampling it.</p><p>This is where continuity of attention actually begins.</p>",
+   "Follow one breath end to end without losing the middle."),
+  D("Calming the body","Breathe in calming the bodily formation. Let the breath quieten of its own accord.","t",
+   "<p>The fourth step introduces the first deliberate change, and even here the instruction is passive. Attention itself settles the breath.</p><p>If you force it, the breath becomes an object of control rather than of knowing.</p>",
+   "Let the breath settle by watching it, not by managing it."),
+  D("The four together","Run all four steps in one sitting: long, short, whole, calming.","s",
+   "<p>The tetrad is meant to be a single movement, not four separate exercises.</p><p>Go through them without hurrying to the end. If attention drops, go back to step one.</p>",
+   "Long, short, whole, calm. In that order."),
+  D("When it falls apart","Practise returning. Notice the loss, come back to step one without comment.","s",
+   "<p>The return is the repetition that builds the faculty. A sit with fifty returns is not a worse sit than one with three.</p><p>What degrades the practice is the commentary about having lost it, not the losing.</p>",
+   "Return without commentary. That is the whole of it."),
+  D("Steadiness","Sit the first tetrad with no ambition to get further.","g",
+   "<p>Sit. Long breath known as long. Short as short. The whole span. The settling.</p><p>Do not move on. The gradual path only works if each stage is actually stable before the next is laid on it, and the commonest error is climbing before the rung holds. Next week the body drops away and feeling takes over. This week is what carries it.</p>",
+   "Nothing to reach. This week is the foundation, not the delay before the real thing.")
+ ]},
+ {theme:"The second tetrad: feeling",days:[
+  D("Sensitive to gladness","Breathe in sensitive to pīti, the lift or brightening that arises when attention settles.","t",
+   "<p>This is not manufactured cheerfulness. It is a specific quality that appears when the mind stops struggling with the object.</p><p>If it is not there, keep to the first tetrad. It cannot be forced into existence.</p>",
+   "Notice if anything brightens when attention settles today."),
+  D("Sensitive to ease","Breathe in sensitive to sukha, the settled comfort underneath the lift.","t",
+   "<p>Pīti is energetic and can be a bit jumpy. Sukha is quieter and more durable, and tends to follow it.</p><p>The order matters. Ease comes after brightness, not instead of it.</p>",
+   "Look for the quieter comfort under any lift, not just the lift."),
+  D("Sensitive to what feeling does","Breathe in sensitive to the mental formation: how feeling shapes what the mind then does.","t",
+   "<p>The third step turns to look at the mechanism. Pleasant feeling leans the mind one way, unpleasant the other.</p><p>Seeing the lean while it happens is the beginning of not being moved by it.</p>",
+   "Catch the lean once today, before it becomes a decision."),
+  D("Calming that formation","Breathe in calming the mental formation. Let the pull of feeling quieten.","s",
+   "<p>The pattern of the first tetrad repeats one level up: know, know, know the whole, calm.</p><p>The calming is again passive. Watching the lean is what settles it.</p>",
+   "Watch the pull rather than obeying it or fighting it."),
+  D("Both tetrads","Run the first tetrad into the second without a break between them.","s",
+   "<p>Eight steps now. The joint between four and five is where most sittings break.</p><p>If feeling has not arisen, stay in the first four. Do not perform the second.</p>",
+   "Eight steps. Do not fake the ones that have not arrived."),
+  D("Unpleasant feeling","When feeling is unpleasant, apply the same four steps to it.","t",
+   "<p>The tetrad is usually taught with pleasant states because that is what arises in a settled sit. The method is identical for the unpleasant.</p><p>Know it, know its texture, see how it leans the mind, watch the lean settle.</p>",
+   "Apply the same four moves to something unpleasant today."),
+  D("Feeling is weather","Sit the second tetrad and watch feeling change while you do not.","g",
+   "<p>Sit through both tetrads. Then stay with the fact that feeling has been moving the entire time: brightening, settling, dulling, leaning.</p><p>This is the week's real yield. Not that you produced pleasant states, but that you watched feeling operate on the mind and were, for a few minutes, not entirely operated.</p>",
+   "Feeling moved all day. Notice that it moved rather than what it moved to.")
+ ]},
+ {theme:"The third tetrad: the mind",days:[
+  D("Sensitive to the mind","Breathe in aware of the state of mind itself, not of the breath.","t",
+   "<p>The object shifts. Until now you have been watching the breath and then feeling. Now the mind itself is the object.</p><p>Is it contracted or open, dull or bright, scattered or gathered? That is the observation.</p>",
+   "Ask once today what state the mind is in. Answer in one word."),
+  D("Gladdening the mind","Breathe in gladdening the mind. Deliberately lift it if it has gone flat.","t",
+   "<p>The tradition is unsentimental about this. If the mind has gone dull, you are permitted to brighten it on purpose.</p><p>Recollection of something wholesome, a straighter posture, a deliberate breath. These are tools, not cheating.</p>",
+   "If the mind goes flat today, lift it on purpose rather than waiting."),
+  D("Steadying the mind","Breathe in concentrating the mind, gathering it to one place.","s",
+   "<p>The complementary move. If gladdening loosens, steadying gathers.</p><p>Knowing which of the two a given moment needs is the actual skill of this tetrad.</p>",
+   "Loosen or gather. Diagnose before applying."),
+  D("Releasing the mind","Breathe in liberating the mind: let go of whatever it has closed around.","t",
+   "<p>The mind grips: a plan, a grievance, a preference. The instruction is to open the hand.</p><p>Releasing here is a specific, repeatable act, not a general aspiration.</p>",
+   "Find one thing the mind is gripping today and open the hand."),
+  D("All twelve","Run the three tetrads in sequence in one sitting.","s",
+   "<p>Twelve steps. This is a long arc and will not complete every time.</p><p>Go as far as is stable and stop there. Stopping early is correct practice, not a shortfall.</p>",
+   "Go as far as is stable. Stop there without disappointment."),
+  D("The mind off the cushion","Apply the four moves of this tetrad during the day rather than in a sit.","t",
+   "<p>Know the state. Lift it, or gather it, or open the grip. These are portable in a way the breath tetrads are not.</p><p>This is where the gradual path starts to leak into ordinary hours.</p>",
+   "Know, lift, gather, release. Four moves, usable anywhere."),
+  D("Who is adjusting?","Sit the third tetrad, then ask what is doing the gladdening and steadying.","g",
+   "<p>Twelve steps, then rest. You have spent a week making deliberate adjustments to the mind.</p><p>Now look at the adjuster. The question is not an argument. It is a hinge, and it is the one that opens onto the last tetrad next week, where the whole apparatus is turned on itself.</p>",
+   "Something has been adjusting the mind all week. Look at it once.")
+ ]},
+ {theme:"The fourth tetrad: seeing through",days:[
+  D("Impermanence","Breathe in contemplating impermanence in whatever is present.","t",
+   "<p>The final tetrad does not add a new object. It applies a lens to everything already established.</p><p>Breath, feeling, mind state: all of it has been arising and passing the entire time. Now you look at that fact directly.</p>",
+   "Whatever is strong today, notice it end."),
+  D("Fading","Breathe in contemplating fading away: the interest in holding on loosens.","t",
+   "<p>This is not a decision to detach. It is what happens when impermanence has been seen often enough.</p><p>Grip loosens on its own when the thing gripped is plainly already leaving.</p>",
+   "Notice one grip loosen without you deciding to loosen it."),
+  D("Cessation","Breathe in contemplating cessation: attend to the ending of things rather than their beginning.","s",
+   "<p>Attention naturally goes to arising, because arising is interesting. The instruction deliberately reverses it.</p><p>Watch the end of each breath, each sound, each thought.</p>",
+   "Watch endings today rather than beginnings."),
+  D("Letting go","Breathe in contemplating relinquishment. Put down what has already been seen through.","s",
+   "<p>The final step of sixteen. Everything before this has been preparation for an act of setting down.</p><p>Not renunciation of your life. Relinquishment of the grip on this breath, this state, this preference.</p>",
+   "Put one thing down today that you have already seen through."),
+  D("All sixteen","Run the full sequence once, without hurrying any tetrad.","s",
+   "<p>This may take longer than your usual sit. Let it.</p><p>If you do not reach the end, the sit is not incomplete. The sequence is a map, not a quota.</p>",
+   "Sixteen steps is a map, not a quota."),
+  D("What was built","Sit and notice what is different from four weeks ago.","t",
+   "<p>The gradual path makes a specific claim: that something accumulates. This is the honest place to test it.</p><p>Not whether you feel better. Whether attention holds where it did not, and returns faster when it goes.</p>",
+   "Does attention return faster than it did a month ago? Just observe."),
+  D("Both paths, side by side","Sit half the time with the sixteen steps and half with a single pointer from the first month.","g",
+   "<p>Run the sixteen steps as far as they go. Then stop the sequence entirely and take any pointer from the Vijñāna Bhairava month: the turn in the breath, the seam between thoughts.</p><p>Notice that the second half needed the first to be as good as it was, and that the first half could not have arrived where the second one starts. Neither path is the complete account. That is why they alternate, and why they are never blended.</p>",
+   "Cultivation makes recognition possible. Recognition is not the end of cultivation.")
+ ]}
+ ]
+},
+{
+ n:3,path:"direct",name:"Self-enquiry",
+ src:"Advaita Vedānta: Ramana Maharshi, the Aṣṭāvakra Gītā",
+ note:"One question, asked properly. Not answered with a thought, and not repeated as a mantra.",
+ weeks:[
+ {theme:"The question",days:[
+  D("Who am I?","Ask the question and do not accept a thought as the answer.","t",
+   "<p>Every answer that arrives as a sentence is a thought, and therefore an object, and therefore not what you were asking about.</p><p>Reject each one gently and ask again. The rejecting is the method.</p>",
+   "Ask once today and refuse the first answer that arrives."),
+  D("Where does the thought arise?","Instead of asking who you are, ask where this thought came from.","s",
+   "<p>A sideways entrance to the same place. Follow any thought backwards towards its source.</p><p>The trail runs out. Where it runs out is the interesting part.</p>",
+   "Follow one thought backwards today until the trail ends."),
+  D("To whom?","When a thought arrives, ask to whom it has occurred.","t",
+   "<p>Ramana's practical version. Any thought, however trivial, is a handle: a worry, a plan, an irritation.</p><p>The answer is always the same, and the point is not the answer but the turn of attention that producing it requires.</p>",
+   "To whom? Ask it twice today of anything."),
+  D("The I-thought","Look for the thought that says I, and hold attention on it rather than on its contents.","t",
+   "<p>The tradition's claim is that there is a first thought on which all others hang, and that it can be isolated.</p><p>Look for the sense of I itself, not the descriptions attached to it.</p>",
+   "Find the bare sense of I today, without its adjectives."),
+  D("Not a mantra","Ask the question once and then wait in the silence it opens.","s",
+   "<p>Repetition turns enquiry into a chant, which is a different practice from a different tradition.</p><p>Ask once. Then stop asking and stay in the state that the asking produced.</p>",
+   "One asking, then silence. Not a repetition."),
+  D("When nothing happens","Sit with the question producing nothing and do not conclude anything from that.","s",
+   "<p>The blankness that follows a properly asked question is often mistaken for failure.</p><p>Nothing happening is not the absence of the practice. It is frequently the practice.</p>",
+   "Nothing happening is not evidence of anything."),
+  D("The question as a direction","Treat the question as pointing rather than asking.","g",
+   "<p>Sit. Ask once. Then notice that the effect of the question is to turn attention back on itself, and that the turn is the whole content of the method.</p><p>A question expects an answer. This one expects a reversal. Once the reversal is happening, the words are scaffolding and can be dropped.</p>",
+   "Turn attention round once today without using the words.")
+ ]},
+ {theme:"Not this, not this",days:[
+  D("Not the body","Consider what you are aware of. The body is among the things you are aware of.","t",
+   "<p>Neti neti is a subtraction, not a denial. The body is real. The claim is that it is an object of awareness rather than the awareness.</p><p>Test it rather than assert it: can you find the body? Then it is on the observed side.</p>",
+   "The body is something you are aware of. Notice that once today."),
+  D("Not the sensations","Apply the same to every physical sensation.","s",
+   "<p>Sensation arrives and departs. Whatever it arrives to does not.</p><p>This is a slow, careful subtraction. Do not rush through the list.</p>",
+   "Sensation comes and goes. What it comes to does not."),
+  D("Not the emotions","Emotions are seen. Look for who or what sees them.","t",
+   "<p>The hardest subtraction, because emotion feels like it is happening to you rather than in front of you.</p><p>But you can report on it, which means there is a vantage point outside it.</p>",
+   "If something strong comes today, note that you can report on it."),
+  D("Not the thoughts","Thought is observed. Find the observing.","s",
+   "<p>You know when you are thinking. That knowing is not itself a thought, or there would be an infinite regress.</p><p>Look for the knowing rather than for a better thought.</p>",
+   "You know you are thinking. What is that knowing?"),
+  D("Not the roles","Subtract the descriptions: the work, the relationships, the history.","t",
+   "<p>These are the stickiest objects because they are socially reinforced every day.</p><p>They are also, straightforwardly, things you know about yourself, which puts them on the observed side with everything else.</p>",
+   "What you do is something you know about. It is not the knower."),
+  D("What cannot be subtracted","Continue subtracting until you reach something that cannot be made an object.","s",
+   "<p>The process is self-limiting. Eventually there is something left that cannot be moved to the observed side.</p><p>It has no qualities, which is why it is easy to overlook and impossible to remove.</p>",
+   "Subtract until something will not move. Leave it there."),
+  D("The subtraction was never real","Notice that nothing was actually removed by any of this.","g",
+   "<p>Sit. Run the week's subtractions quickly: body, sensation, emotion, thought, role.</p><p>Then see that all of them are still here. Nothing has been renounced or destroyed. What changed is only which side of the line they were put on, and the line was always there. Advaita does not ask you to lose your life. It asks you to stop mistaking it for the one who has it.</p>",
+   "Nothing was removed. Only relocated.")
+ ]},
+ {theme:"The witness",days:[
+  D("Standing back","Rest as the one who sees rather than as what is seen.","t",
+   "<p>The witness position is the natural result of last week's subtraction. It is a real and stable vantage point.</p><p>It is also not the final position, which matters later this month.</p>",
+   "Stand back once today. Notice it is a position you can take."),
+  D("The witness does not move","Notice that the seeing does not change when the seen changes.","s",
+   "<p>Contents alter constantly: bright, dull, agitated, calm. Check whether the seeing itself has a temperature.</p><p>It does not, and that is the observation.</p>",
+   "The scene changed all day. Did the seeing?"),
+  D("Witnessing the witness","Try to observe the witness. Notice that it cannot be done.","t",
+   "<p>Anything you catch is an object, which means it is not the witness.</p><p>The failure is informative rather than frustrating. It tells you what kind of thing you are dealing with.</p>",
+   "Try to catch the one looking. Notice the failure is the answer."),
+  D("Aṣṭāvakra's claim","Consider the text's position: you were never bound, so there is nothing to be freed from.","t",
+   "<p>The Aṣṭāvakra Gītā is the most uncompromising text in this tradition. It does not offer a method, it offers a flat statement.</p><p>Sit with the statement rather than agreeing or disagreeing with it.</p>",
+   "Sit with the claim that nothing needs fixing. Do not settle it."),
+  D("Effort as the obstacle","Notice that the effort to realise assumes you have not.","s",
+   "<p>This is the direct path's sharpest point and its main hazard. The seeking maintains the gap it is trying to close.</p><p>It does not follow that you should stop sitting. It follows that the sitting is not a means to an end.</p>",
+   "The seeking assumes the absence. Notice the assumption."),
+  D("Effortless attention","Sit without trying to do the practice. Notice that awareness is already operating.","s",
+   "<p>Drop the technique entirely for one sitting. Awareness does not switch off when you stop managing it.</p><p>That it continues unattended is the point being demonstrated.</p>",
+   "Stop managing attention for a minute. It keeps working."),
+  D("The witness dissolves","Notice that the split between witness and witnessed is itself a construction.","g",
+   "<p>Sit as the witness. Then look at the arrangement: something here, watching something there.</p><p>That arrangement was useful and it is not final. The last step is that the line dissolves and there is just experiencing, with nobody standing behind it. Do not force this. Just stop defending the position.</p>",
+   "The watcher and the watched are one arrangement, not two things.")
+ ]},
+ {theme:"Letting the enquirer go",days:[
+  D("Nothing to attain","Sit with the possibility that there is no state to reach.","t",
+   "<p>If what you are looking for is what is looking, it cannot be attained, only recognised.</p><p>This removes the future from the practice, which removes most of the anxiety in it.</p>",
+   "There is no state coming later. Check whether that is a relief or a loss."),
+  D("Sahaja","Rest in the ordinary state without trying to improve it.","s",
+   "<p>Sahaja means natural or spontaneous. It is not a special condition, it is this one, unedited.</p><p>The practice at this stage consists mostly of not interfering.</p>",
+   "Do not improve anything today. Just do not interfere."),
+  D("During the day","Ask the question once in the middle of ordinary activity.","t",
+   "<p>The tradition's real test is not on the cushion. It is whether the reversal is available while you are busy.</p><p>One turn, mid-task, without stopping what you are doing.</p>",
+   "One reversal today in the middle of doing something else."),
+  D("When it is lost","Notice that what is lost is the noticing, not the thing.","s",
+   "<p>You cannot lose what you are. You can lose track of it, and you will, constantly.</p><p>So recovery is instant and requires no rebuilding, which is the practical advantage of this path.</p>",
+   "Lost track, not lost. Recovery takes no time."),
+  D("No progress","Sit without reference to how the practice is going.","s",
+   "<p>Assessment is an object. Every judgement about your progress is a thought you could have subtracted in week two.</p><p>Sit with no view about the sitting.</p>",
+   "Hold no view today about how any of this is going."),
+  D("The question, once more","Ask who am I and notice what has changed in a month.","t",
+   "<p>Same words, four weeks later. The question will land differently, or it will not.</p><p>Either outcome is information and neither is a grade.</p>",
+   "Same question, fourth week. Notice where it lands now."),
+  D("Handing over to the next path","Sit, then notice what the direct path cannot give you.","g",
+   "<p>Sit in the ordinary state. Ask once, or do not.</p><p>Then be honest about the limits of this month. Recognition is available in an instant and it does not, by itself, change the habits, the reactivity or the character that will meet you tomorrow. That is not a flaw in the direct path, it is simply outside its remit. Next month returns to cultivation, which is where that work is done.</p>",
+   "Recognition is instant. Character is not. Both are real work.")
+ ]}
+ ]
+},
+{
+ n:4,path:"gradual",name:"Dhikr and murāqaba",
+ src:"Sufism: al-Ghazālī, the Naqshbandī and Chishtī practice traditions",
+ note:"Remembrance, repeated until it moves from the tongue to the heart, and watchfulness held over it.",
+ weeks:[
+ {theme:"Remembrance on the tongue",days:[
+  D("A single phrase","Choose one short phrase and repeat it aloud or under the breath.","t",
+   "<p>Dhikr means remembrance. The mechanism is repetition of something short until it displaces the ordinary internal chatter.</p><p>Choose a phrase you are willing to say ten thousand times. Its brevity matters more than its beauty.</p>",
+   "Say the phrase ten times today, under your breath."),
+  D("With the breath","Set the phrase to the breath: one part in, one part out.","s",
+   "<p>Binding the repetition to the breath gives it a rhythm that does not require you to maintain it.</p><p>The breath keeps time so attention does not have to.</p>",
+   "Let the breath carry the phrase for a few cycles today."),
+  D("Counting","Count the repetitions. Let the count be an anchor rather than a target.","s",
+   "<p>A string of beads or the fingers. Counting keeps a part of the mind occupied that would otherwise wander.</p><p>The number is not an achievement. It is ballast.</p>",
+   "Count without minding the number."),
+  D("When it goes mechanical","Notice the repetition becoming automatic. Do not correct it.","t",
+   "<p>Every repetition practice goes hollow. The classical literature expects this and does not treat it as failure.</p><p>The hollowness is a stage. Continuing through it is what moves the practice inward.</p>",
+   "If it goes hollow today, continue anyway."),
+  D("Aloud","Say it audibly for part of the sitting.","s",
+   "<p>Sound involves the body, which anchors attention differently from silent repetition.</p><p>Some lineages hold that the audible form must precede the silent one.</p>",
+   "Say it out loud once today, even quietly."),
+  D("In the middle of the day","Repeat the phrase while walking, queuing, waiting.","t",
+   "<p>Dhikr is designed for a life, not a retreat. Its whole advantage is portability.</p><p>Dead time in a day is the practice's native habitat.</p>",
+   "Use one queue, one walk, one wait."),
+  D("The tongue tires","Sit until the saying becomes effortless and notice what continues on its own.","g",
+   "<p>Repeat the phrase for the length of the sitting. Do not stop when it gets dull.</p><p>At some point the repetition stops requiring you. It runs, and you are listening to it rather than producing it. That transfer is the entire purpose of this first week, and it is where next week begins.</p>",
+   "When it runs without you, listen rather than produce.")
+ ]},
+ {theme:"Remembrance in the heart",days:[
+  D("Moving it inward","Stop saying the phrase and let it continue silently in the chest.","t",
+   "<p>The classical progression is tongue, then heart, then something the texts decline to describe.</p><p>The move inward is not visualisation. It is a change in where the repetition seems to be occurring.</p>",
+   "Let the phrase sit in the chest rather than the mouth."),
+  D("Located","Place attention in the centre of the chest and let the phrase sound there.","s",
+   "<p>The heart here is a station, not an emotion. It is a place attention is put and kept.</p><p>Steadiness of location does most of the work.</p>",
+   "One location, held. Return to it without ceremony."),
+  D("With the pulse","Let the repetition find the heartbeat rather than the breath.","s",
+   "<p>Some lineages bind dhikr to the pulse. It is slower and more insistent than the breath.</p><p>If you cannot feel the pulse, stay with the breath. Do not strain for it.</p>",
+   "If the pulse is findable today, let it keep time."),
+  D("Warmth","Notice any warmth or density that gathers at the location. Do not chase it.","t",
+   "<p>Practitioners commonly report a physical quality gathering at the heart. It is a by-product.</p><p>Chasing by-products is the standard way this practice goes wrong.</p>",
+   "If something gathers, note it and carry on."),
+  D("Without words","Let the phrase thin until only its shape remains.","s",
+   "<p>The repetition wears down to a contour, then to an orientation with no content.</p><p>Do not force this. It happens when the repetition has been done enough.</p>",
+   "Let the words thin out. Do not replace them."),
+  D("The heart remembers alone","Sit and let the remembrance continue without your participation.","s",
+   "<p>The stated goal of this tetrad of weeks: remembrance that continues while you are doing other things.</p><p>You are not maintaining it. You are keeping company with it.</p>",
+   "Keep it company rather than maintaining it."),
+  D("What is being remembered","Sit with the question of what remembrance is for.","g",
+   "<p>Let the phrase run in the heart. Then consider the word itself. Remembrance implies something forgotten, something that was known and has been mislaid.</p><p>The Sufi framing and the Kashmiri one converge exactly here: the tradition of recognition says you already are it, and the tradition of remembrance says you already knew it. The methods are opposite. The diagnosis is the same.</p>",
+   "Remembrance assumes prior knowing. Sit with what that implies.")
+ ]},
+ {theme:"Murāqaba, watchfulness",days:[
+  D("Being watched","Sit in the awareness that you are seen.","t",
+   "<p>Murāqaba means vigilance or watchful attention. Its classical form is not watching, but being watched.</p><p>Whatever your metaphysics, the reversal is the practice: you are the object of attention, not its holder.</p>",
+   "Once today, be the one observed rather than the observer."),
+  D("Watching the heart","Keep watch over what passes through the heart during the day.","s",
+   "<p>Al-Ghazālī's practical version. Not thoughts, but motives, the small self-serving turns.</p><p>Watchfulness without punishment. You are taking inventory, not prosecuting.</p>",
+   "Note one motive today. Do not prosecute it."),
+  D("Before the act","Catch the intention before the action leaves you.","t",
+   "<p>The tradition places enormous weight on intention, which means on the moment before.</p><p>This is the same instant the Vijñāna Bhairava pointed at in its fourth week, approached from a different direction and for a different purpose.</p>",
+   "Catch one intention today before it becomes an act."),
+  D("After the act","Review the day briefly without self-flagellation.","s",
+   "<p>The daily reckoning is standard in this tradition and is meant to be short and unsentimental.</p><p>Extended self-criticism is another form of self-absorption and the literature says so.</p>",
+   "Two minutes of review. No more. No theatre."),
+  D("Watchfulness in company","Hold the practice while talking to someone.","t",
+   "<p>The hardest setting, and the one the tradition cares most about, since it is an ethical practice as much as a contemplative one.</p><p>Watch the motive underneath what you are saying while you say it.</p>",
+   "One conversation today with the motive in view."),
+  D("Constant","Attempt continuity: watchfulness that does not stop when the sitting does.","s",
+   "<p>The stated aim is unbroken. You will not achieve it. The attempt itself changes the day's texture.</p><p>This is a gradual path claim and it wants years, not weeks.</p>",
+   "Attempt continuity. Expect to fail. Continue."),
+  D("Watchfulness and enquiry","Sit with murāqaba, then ask who is being watched.","g",
+   "<p>Hold the state of being observed. Then bring last month's question into it: who is the one being seen?</p><p>Watch the two methods collide. One puts you firmly in the position of the observed servant; the other dissolves the observer and the observed together. They do not reconcile neatly, and you should not make them. Holding both without forcing a settlement is more honest than a synthesis you have not earned.</p>",
+   "Do not resolve the two. Hold them both unsettled.")
+ ]},
+ {theme:"Fanā, the thinning",days:[
+  D("The self as the obstacle","Notice how much of the practice has been about the practitioner.","t",
+   "<p>Fanā means annihilation or passing away, and refers to the effacement of the self that is conducting the practice.</p><p>Begin by noticing how present that self has been all month.</p>",
+   "Notice how much of today was about you."),
+  D("Poverty","Sit in faqr, the recognition of having nothing of your own.","t",
+   "<p>Spiritual poverty is not material. It is the position of having no resources, no standing and no claim.</p><p>It is closer to relief than to humiliation, when it is real.</p>",
+   "Hold one thing today without claiming it as yours."),
+  D("Effacement in the sitting","Let the one who is practising become less prominent than the practice.","s",
+   "<p>The repetition continues. The watcher thins. There is remembrance and no obvious rememberer.</p><p>Do not stage this. It either happens or it does not, and staging it is worse than not having it.</p>",
+   "Let the doer recede. Do not perform its absence."),
+  D("Not a loss","Notice that nothing valuable disappears in this.","s",
+   "<p>The language of annihilation is alarming and the experience, when it comes at all, is not.</p><p>What thins is a defensive structure, not a person.</p>",
+   "What thins is the defending, not the person."),
+  D("Baqā","Consider the return: subsistence, the ordinary life resumed afterwards.","t",
+   "<p>The tradition insists that fanā is followed by baqā, remaining. You come back and you go to work.</p><p>A practice that cannot be walked out of the room with is considered incomplete here.</p>",
+   "Whatever this is, it has to survive an ordinary Tuesday."),
+  D("The whole month","Run tongue, heart, watchfulness and thinning in one sitting.","s",
+   "<p>Four weeks in one arc. It will be uneven and that is expected.</p><p>The sequence is what you have built; run it and see what holds.</p>",
+   "Four weeks, one arc. See what holds."),
+  D("Four months","Sit with what the two paths have each given you.","g",
+   "<p>Four blocks are done. Two of recognition, two of cultivation, kept deliberately apart.</p><p>Recognition gave you doorways that work instantly and change nothing permanent. Cultivation gave you a faculty that accumulates and cannot be had suddenly. Anyone who tells you one of these is the real one is selling a lineage. Hold both, keep them distinct, and let the calendar do the alternating so you do not have to decide every morning.</p>",
+   "Two paths, kept apart on purpose. The calendar decides, not the mood.")
+ ]}
+ ]
+},
+{n:5,path:"direct",name:"Spanda and recognition",src:"Spanda Kārikās, Pratyabhijñāhṛdayam",
+ note:"The pulse underneath experience, and the doctrine that realisation is recognition of something never absent.",
+ stub:1,weeks:[{theme:"The throb in every perception"},{theme:"The five acts, continuously"},{theme:"Contraction and expansion"},{theme:"Recognition without a method"}]},
+
+{n:6,path:"gradual",name:"Satipaṭṭhāna",src:"Majjhima Nikāya 10",
+ note:"The four establishments of mindfulness, worked through in their canonical order over a month.",
+ stub:1,weeks:[{theme:"Body: posture, parts, elements"},{theme:"Feeling tone, before it becomes preference"},{theme:"States of mind, named as they arise"},{theme:"The hindrances and the factors of awakening"}]},
+
+{n:7,path:"direct",name:"The unity of being",src:"Ibn ʿArabī, al-Futūḥāt al-Makkiyya and Fuṣūṣ al-ḥikam",
+ note:"Sufism's direct strand. Nothing exists but the real, and every face is one of its disclosures.",
+ stub:1,weeks:[{theme:"Disclosure: each moment as unrepeated"},{theme:"The imagination as an organ of perception"},{theme:"The divine names in ordinary events"},{theme:"Bewilderment as the correct outcome"}]},
+
+{n:8,path:"gradual",name:"The four immeasurables",src:"Brahmavihāras, Visuddhimagga",
+ note:"Deliberate cultivation of goodwill, compassion, gladness and equanimity, in that order.",
+ stub:1,weeks:[{theme:"Goodwill, beginning where it is easy"},{theme:"Compassion, without taking on the suffering"},{theme:"Gladness at another's good fortune"},{theme:"Equanimity that is not indifference"}]},
+
+{n:9,path:"direct",name:"The Śiva Sūtras",src:"Vasugupta, with Kṣemarāja's commentary",
+ note:"Seventy-seven aphorisms in three sections, one for each of the three paths of descending effort.",
+ stub:1,weeks:[{theme:"Consciousness is the self"},{theme:"The means of the mind"},{theme:"The means of energy"},{theme:"The way where no means are used"}]},
+
+{n:10,path:"gradual",name:"Purifying the self",src:"al-Ghazālī, Iḥyāʾ ʿulūm al-dīn",
+ note:"The stations of the nafs and the practical work on character that contemplative practice alone does not do.",
+ stub:1,weeks:[{theme:"The commanding self, seen clearly"},{theme:"The self that reproaches itself"},{theme:"Sincerity and its counterfeits"},{theme:"The self at rest"}]},
+
+{n:11,path:"direct",name:"The Aṣṭāvakra Gītā",src:"Advaita Vedānta, undated",
+ note:"The most uncompromising text in the tradition. It offers no practice and concedes nothing to the seeker.",
+ stub:1,weeks:[{theme:"You were never bound"},{theme:"The seer is not in the scene"},{theme:"Desire and aversion as the only bondage"},{theme:"Nothing left to do"}]},
+
+{n:12,path:"gradual",name:"The three characteristics",src:"Early Buddhist insight practice",
+ note:"Impermanence, unsatisfactoriness and not-self, applied systematically to everything the year has produced.",
+ stub:1,weeks:[{theme:"Impermanence at the speed of sensation"},{theme:"Where the dissatisfaction actually sits"},{theme:"Not-self, applied to the practitioner"},{theme:"The year, reviewed without a verdict"}]}
+];
+
+const RES=[
+{g:"Kashmir Shaivism"},
+{n:"Christopher Wallis: the Vijñāna Bhairava, verse by verse",w:"hareesh.org — free",
+ d:"A trained Sanskritist working through the text one verse at a time, with the practice instructions explained rather than paraphrased into poetry. The best free starting point for block one.",
+ u:"https://hareesh.org/blog/2022/5/30/vbt-intro-and-verse-one"},
+{n:"Jaideva Singh and Mark Dyczkowski translations",w:"in print",
+ d:"Wallis notes that most English versions of the Vijñāna Bhairava were made by people without Sanskrit, producing loose renderings that lose the actual technique. He names these two as the exceptions. Worth buying one.",u:""},
+{n:"Tantra Illuminated, Christopher Wallis",w:"in print",
+ d:"The standard accessible introduction to the whole non-dual Śaiva tradition, including the Śiva Sūtras and Pratyabhijñā material used in blocks five and nine.",u:""},
+
+{g:"Buddhism"},
+{n:"SuttaCentral",w:"suttacentral.net — free",
+ d:"The full early canon in Pali with multiple English translations, parallel texts and a search that actually works. MN 118 is the source for block two and MN 10 for block six.",
+ u:"https://suttacentral.net"},
+{n:"Access to Insight",w:"accesstoinsight.org — free",
+ d:"An older library, smaller than SuttaCentral but with a deep collection of practice essays by forest-tradition teachers alongside the suttas. Better for the how than the what.",
+ u:"https://www.accesstoinsight.org"},
+
+{g:"Advaita Vedānta"},
+{n:"Free Ramana Maharshi books",w:"realization.org — free",
+ d:"An indexed set of legitimate free downloads of the ashram's published books and the major records of conversation, in PDF and EPUB.",
+ u:"https://realization.org/p/free-books/free-ramana-books/free-ramana-books.html"},
+{n:"Sri Ramanasramam",w:"gururamana.org — free and paid",
+ d:"The ashram's own site, with back issues of its journal and its bookstore. The primary source for anything attributed to Ramana.",
+ u:"https://www.gururamana.org"},
+
+{g:"Sufism"},
+{n:"The Masnavi in full",w:"masnavi.net — free",
+ d:"Rumi's complete Masnavi in Persian, Nicholson's English and Turkish, side by side and word-searchable, all based on the 1278 Konya manuscript.",
+ u:"https://dar-al-masnavi.org/masnavi.net.html"},
+{n:"Dar al-Masnavi",w:"dar-al-masnavi.org — free",
+ d:"Background on Nicholson's translation including a frank account of its weaknesses, plus links to the older Whinfield and Redhouse versions. Useful for judging which Rumi you are actually reading.",
+ u:"https://www.dar-al-masnavi.org/links.html"},
+{n:"The Muhyiddin Ibn Arabi Society",w:"ibnarabisociety.org — free",
+ d:"Over two hundred articles, mostly from its peer-reviewed journal, plus around a hundred recorded talks. The serious entry point for block seven.",
+ u:"https://ibnarabisociety.org"},
+
+{g:"A note on translations"},
+{n:"Which version you read matters",w:"",
+ d:"The pointers in this app are written in plain English rather than quoted, because most well-known renderings are under copyright and several of the popular ones are loose adaptations rather than translations. When you go to the sources, prefer a translator who reads the original language and says so.",u:""}
+];
+</script>
+<div id="app"></div>
+<div id="sit">
+  <div class="ring"><i></i><div class="clock" id="clock">00:00</div></div>
+  <p class="sit-pointer" id="sitP"></p>
+  <div class="sit-acts">
+    <button id="pause">Pause</button>
+    <button id="stop">End sit</button>
+  </div>
+</div>
+<nav><div class="navin">
+  <button data-s="today" aria-current="page">Today</button>
+  <button data-s="days">Days</button>
+  <button data-s="year">Year</button>
+  <button data-s="read">Read</button>
+</div></nav>
+<input type="file" id="picker" accept="application/json,.json" hidden>
+
+<script>
+/* Storage. Uses the Claude artifact store when present, otherwise the browser's
+   own local storage. Both keep everything on this device; nothing is sent anywhere. */
+const KEY='sandhi.v1', OLDKEY='practice.v1';
+const store={
+  async get(){
+    if(window.storage&&window.storage.get){
+      for(const k of [KEY,OLDKEY]){
+        try{const r=await window.storage.get(k);if(r&&r.value)return r.value;}catch(e){}
+      }
+      return null;
+    }
+    try{return localStorage.getItem(KEY)||localStorage.getItem(OLDKEY);}catch(e){return null;}
+  },
+  async set(v){
+    if(window.storage&&window.storage.set){
+      try{await window.storage.set(KEY,v);return true;}catch(e){}
+    }
+    try{localStorage.setItem(KEY,v);return true;}catch(e){return false;}
+  },
+  async clear(){
+    if(window.storage&&window.storage.delete){
+      for(const k of [KEY,OLDKEY]){try{await window.storage.delete(k);}catch(e){}}
+    }
+    try{localStorage.removeItem(KEY);localStorage.removeItem(OLDKEY);}catch(e){}
+  }
+};
+
+const app=document.getElementById('app');
+let S={sits:[],start:null}, screen='today', dur=15, cal=new Date(), closing=false, held=null, busy=true, flash='';
+
+const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const today=()=>iso(new Date());
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const MON=['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+async function load(){
+  const raw=await store.get();
+  if(raw){try{const p=JSON.parse(raw);if(p&&Array.isArray(p.sits))S=p;}catch(e){}}
+  if(!S.sits)S.sits=[];
+  if(!S.start){S.start=today();await save();}
+  busy=false;render();
+}
+const save=()=>store.set(JSON.stringify(S));
+
+function pos(){
+  const a=new Date(S.start+'T00:00:00'), b=new Date(today()+'T00:00:00');
+  const n=Math.max(0,Math.round((b-a)/864e5));
+  const bi=Math.min(11,Math.floor(n/28));
+  return {n,bi,wi:Math.floor((n%28)/7),di:n%7};
+}
+const sat=d=>S.sits.find(s=>s.d===d);
+
+/* ---------------- today ---------------- */
+function today_(){
+  const p=pos(), B=BLOCKS[p.bi], W=B.weeks[p.wi], done=sat(today());
+  const tag=`<span class="path-tag ${B.path}">${B.path==='direct'?'Recognition':'Cultivation'}</span>`;
+  const head=`<div class="crumb">${tag}<b>${esc(B.name)}</b><span>week ${p.wi+1} of 4 &middot; day ${p.di+1}</span></div>
+    <p class="week-theme">${esc(W.theme)}</p>`;
+
+  if(B.stub) return head+`<div class="hold" style="margin-top:34px"><span>This block is an outline</span><em>The four weekly themes are set but the daily pointers have not been written yet.</em></div>
+    <p class="teach" style="margin-top:26px">${esc(B.note)}</p>`;
+
+  const d=W.days[p.di];
+  const fmt={s:'Silent sit, one pointer',t:'Short teaching, then sit',g:'Guided, longer'}[d.f];
+  let h=head+`<div class="${B.path==='gradual'?'gradual-day':''}">
+    <p class="fmt">${fmt}</p>
+    <p class="daytitle">${esc(d.t)}</p>
+    <p class="pointer">${esc(d.p)}</p>
+    <div class="teach">${d.x}</div>
+    <div class="hold"><span>Carry this into the day</span><em>${esc(d.h)}</em></div>`;
+
+  if(closing){
+    h+=`<div class="field"><label>One line on what you noticed</label><textarea id="note" placeholder="Optional."></textarea></div>
+      <div class="field"><label>Did you remember the day-hold?</label><div class="yn">
+        <button data-h="1" aria-pressed="${held===1}">Yes</button>
+        <button data-h="0" aria-pressed="${held===0}">No</button>
+        <button data-h="-1" aria-pressed="${held===-1}">Not yet</button></div></div>
+      <button class="begin" id="saveSit">Save this sit</button>`;
+  } else if(done){
+    h+=`<div class="field"><label>Sat today for ${done.min} minutes.</label>
+      ${done.note?`<p class="teach" style="margin-top:0">${esc(done.note)}</p>`:''}</div>
+      <button class="begin done" id="again">Sit again</button>`;
+  } else {
+    h+=`<div class="durs">${[10,15,20,30,45].map(m=>`<button class="dur" data-d="${m}" aria-pressed="${dur===m}">${m}</button>`).join('')}</div>
+      <button class="begin" id="begin">Begin</button>`;
+  }
+  return h+`</div>`;
+}
+
+/* ---------------- days ---------------- */
+function days_(){
+  const y=cal.getFullYear(), m=cal.getMonth();
+  const first=new Date(y,m,1).getDay(), len=new Date(y,m+1,0).getDate();
+  let cells='';
+  for(let i=0;i<first;i++)cells+='<div class="cell blank"></div>';
+  for(let d=1;d<=len;d++){
+    const k=iso(new Date(y,m,d)), s=sat(k);
+    cells+=`<div class="cell ${s?'sat':''} ${s&&s.path==='gradual'?'g':''} ${k===today()?'today':''}">${d}</div>`;
+  }
+  const mins=S.sits.reduce((a,s)=>a+s.min,0), p=pos();
+  const inBlock=S.sits.filter(s=>s.b===p.bi+1).length;
+  const recent=[...S.sits].sort((a,b)=>b.d<a.d?-1:1).slice(0,20);
+
+  return `<h2 class="screen">Days</h2>
+  <p class="sub">Gold is a recognition block, blue a cultivation block. A day you did not sit is simply an empty square.</p>
+  <div class="mon"><button id="pm" aria-label="Previous month">&lsaquo;</button><h3>${MON[m]} ${y}</h3><button id="nm" aria-label="Next month">&rsaquo;</button></div>
+  <div class="grid">${['S','M','T','W','T','F','S'].map(d=>`<div class="dow">${d}</div>`).join('')}${cells}</div>
+  <div class="tally">
+    <div><span>${S.sits.length}</span><small>sits</small></div>
+    <div><span>${Math.round(mins/60)}</span><small>hours</small></div>
+    <div><span>${inBlock}</span><small>days this block</small></div>
+    <div><span>${p.n+1}</span><small>days in</small></div>
+  </div>
+  ${recent.length?`<div class="log">${recent.map(s=>`<div class="entry">
+    <header><span>${esc(s.d)}</span><span>${s.min} min${s.held===1?' &middot; held':''}</span></header>
+    <h4>${esc(s.title||'')}</h4>
+    ${s.note?`<p>${esc(s.note)}</p>`:''}</div>`).join('')}</div>`:''}
+
+  <div class="data">
+    <h3>Your practice record</h3>
+    <p>Everything is stored in this browser on this device. Clearing site data will erase it, so export a copy occasionally if the record matters to you.</p>
+    <div class="row">
+      <button id="exp">Export a copy</button>
+      <button id="imp">Import a file</button>
+      <button id="reset" class="warn">Erase everything</button>
+    </div>
+    <div class="startdate">
+      <label for="sd">Day one of the year</label>
+      <input type="date" id="sd" value="${S.start}">
+    </div>
+    ${flash?`<p class="flash">${esc(flash)}</p>`:''}
+  </div>`;
+}
+
+/* ---------------- year ---------------- */
+function year_(){
+  const p=pos();
+  return `<h2 class="screen">The year</h2>
+  <p class="sub">Twelve blocks of four weeks, alternating between the two paths. You do not choose each morning; the block does.</p>
+  ${BLOCKS.map((B,i)=>{
+    const now=i===p.bi;
+    return `<div class="block ${now?'now':''} ${B.path==='gradual'?'g-block':''}">
+      <div class="no">${B.n}</div>
+      <div style="flex:1">
+        <h4>${esc(B.name)}</h4>
+        <p>${esc(B.src)} &middot; <span class="${B.path}">${B.path==='direct'?'recognition':'cultivation'}</span>${B.stub?' &middot; outline only':''}</p>
+        ${now?`<ul class="weeks">${B.weeks.map((w,j)=>`<li class="${j===p.wi?'wk':''}">${esc(w.theme)}</li>`).join('')}</ul>
+          <p style="margin-top:10px;font-size:13.5px;color:var(--quiet)">${esc(B.note)}</p>`:''}
+      </div></div>`;
+  }).join('')}`;
+}
+
+/* ---------------- read ---------------- */
+function read_(){
+  return `<h2 class="screen">Going deeper</h2>
+  <p class="sub">Sources for the texts behind each block. Everything marked free is legitimately free from the publisher or the tradition's own institution.</p>
+  ${RES.map(r=>r.g?`<p class="group">${esc(r.g)}</p>`:`<div class="res">
+    <h4>${esc(r.n)}</h4>
+    ${r.w?`<p class="who">${esc(r.w)}</p>`:''}
+    <p>${esc(r.d)}</p>
+    ${r.u?`<a href="${r.u}" target="_blank" rel="noopener">${esc(r.u.replace('https://',''))}</a>`:''}</div>`).join('')}`;
+}
+
+/* ---------------- render ---------------- */
+function render(){
+  if(busy){app.innerHTML='<p class="sub" style="margin-top:60px">Loading your practice.</p>';return;}
+  app.innerHTML={today:today_,days:days_,year:year_,read:read_}[screen]();
+  document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-current',b.dataset.s===screen?'page':'false'));
+}
+
+/* ---------------- timer ---------------- */
+let tid=null,left=0,paused=false;
+function startSit(){
+  const p=pos(),B=BLOCKS[p.bi];
+  if(B.stub)return;
+  const d=B.weeks[p.wi].days[p.di];
+  document.getElementById('sitP').textContent=d.p;
+  left=dur*60;paused=false;document.getElementById('pause').textContent='Pause';
+  document.getElementById('sit').classList.add('on');tick();
+  clearInterval(tid);
+  tid=setInterval(()=>{if(!paused){left--;tick();if(left<=0)endSit();}},1000);
+}
+function tick(){
+  document.getElementById('clock').textContent=
+    `${String(Math.floor(Math.max(0,left)/60)).padStart(2,'0')}:${String(Math.max(0,left)%60).padStart(2,'0')}`;
+}
+function endSit(){
+  clearInterval(tid);document.getElementById('sit').classList.remove('on');
+  closing=true;held=null;screen='today';render();
+}
+
+/* ---------------- data in and out ---------------- */
+function exportData(){
+  const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`sandhi-${today()}.json`;
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  flash='Exported.';render();
+}
+document.getElementById('picker').addEventListener('change',async e=>{
+  const f=e.target.files[0];if(!f)return;
+  try{
+    const p=JSON.parse(await f.text());
+    if(!p||!Array.isArray(p.sits))throw 0;
+    const seen=new Set(p.sits.map(s=>s.d));
+    S.sits=p.sits.concat(S.sits.filter(s=>!seen.has(s.d)));
+    if(p.start)S.start=p.start;
+    await save();flash=`Imported ${p.sits.length} sits.`;
+  }catch(err){flash='That file could not be read. It needs to be an export from this app.';}
+  e.target.value='';render();
+});
+
+/* ---------------- events ---------------- */
+document.addEventListener('change',async e=>{
+  if(e.target.id==='sd'&&e.target.value){
+    S.start=e.target.value;await save();flash='Day one moved.';render();
+  }
+});
+document.addEventListener('click',async e=>{
+  const t=e.target.closest('button');if(!t)return;
+  if(t.dataset.s){screen=t.dataset.s;closing=false;flash='';render();return;}
+  if(t.classList.contains('dur')){dur=+t.dataset.d;render();return;}
+  if(t.id==='begin'||t.id==='again'){startSit();return;}
+  if(t.id==='pause'){paused=!paused;t.textContent=paused?'Resume':'Pause';return;}
+  if(t.id==='stop'){endSit();return;}
+  if(t.dataset.h!==undefined){held=+t.dataset.h;render();return;}
+  if(t.id==='pm'){cal.setMonth(cal.getMonth()-1);render();return;}
+  if(t.id==='nm'){cal.setMonth(cal.getMonth()+1);render();return;}
+  if(t.id==='exp'){exportData();return;}
+  if(t.id==='imp'){document.getElementById('picker').click();return;}
+  if(t.id==='reset'){
+    if(confirm('This erases every sit and note on this device. Export first if you want a copy.')){
+      await store.clear();S={sits:[],start:today()};await save();flash='Erased.';render();
+    }
+    return;
+  }
+  if(t.id==='saveSit'){
+    const p=pos(),B=BLOCKS[p.bi],d=B.weeks[p.wi].days[p.di];
+    const note=(document.getElementById('note')||{}).value||'';
+    const rec={d:today(),b:B.n,w:p.wi,dy:p.di,min:Math.max(1,dur-Math.floor(Math.max(0,left)/60)),
+      note:note.trim(),held:held,path:B.path,title:d.t};
+    S.sits=S.sits.filter(s=>s.d!==rec.d);S.sits.push(rec);
+    closing=false;render();await save();
+  }
+});
+load();
+</script>
+</body>
+</html>
